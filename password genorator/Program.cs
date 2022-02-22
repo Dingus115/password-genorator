@@ -1,4 +1,5 @@
 ﻿ using System;
+using System.Linq;
 
 namespace password_genorator
 {
@@ -72,7 +73,7 @@ namespace password_genorator
             string result = null;
             int passLegnth = totalLetter + totalLower + totalUpper + totalNum;
 
-            if (passLegnth < 7)
+            if (passLegnth < 8)
             {
                 result = "Password does not meat minimum character legnth. Please try again \n";
             }
@@ -87,7 +88,7 @@ namespace password_genorator
                 else
                 {
                     if (totalUpper < 2)
-                    {
+                    { 
                         result = "Not enough Upper case letters \n";
                     }
 
@@ -97,7 +98,7 @@ namespace password_genorator
                     }
                 }
 
-                if (totalNum < 2)
+                if (totalNum < 3)
                 {
                     result = result + "Not enough numbers \n";
                 }
@@ -109,23 +110,27 @@ namespace password_genorator
         {
             string suggestedPassword;
             char[] suggestion = new char[9];
-            Random letter = new Random();
-            Random number = new Random();
+            Random rnd = new Random();
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++)                     //creates 7 random letters
             {
-                suggestion[i] = (char)letter.Next('a', 'z');
+                suggestion[i] = (char)rnd.Next('a', 'z');
             }
 
-            for(int i = 7; i < 9; i++)
+            for(int i = 6; i < 9; i++)                      //adds 3 random numbers to the end of the suggested password
             {
-                int num = number.Next(0, 9);
-                suggestion[i] = Convert.ToChar(num);
-            }
+                //int num = number.Next(9);                     Converts num into a special character rather than a number
+                //suggestion[i] = Convert.ToChar(num);
 
+                int num = rnd.Next(9);                       //I don't understand why this works this way
+                string temp;
+                temp= Convert.ToString(num);
+                suggestion[i] = Convert.ToChar(temp);
+            }
+            
             suggestedPassword = string.Join("", suggestion);
-
-            return Convert.ToString(suggestedPassword);
+            suggestedPassword = new string(suggestedPassword.ToCharArray().OrderBy(s => (rnd.Next(2) % 2) == 0).ToArray()); //randomizes the order of characters in the password
+            return suggestedPassword;
         }
     }
 }
