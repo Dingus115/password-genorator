@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.Linq;
 
 namespace password_genorator
@@ -33,10 +33,12 @@ namespace password_genorator
         private static string passwordValue(string newPassword)                  //take in user input password
         {
             string result = null;
+            char[] specialChar = { '!', '@', '#', '$', '%', '^', '&', '*' };
             int totalNum = 0;
             int totalLowerLetter = 0;
             int totalUpperLetter = 0;
             int totalLetter = 0;
+            int totalSpecial = 0;
 
             foreach (char character in newPassword)                                  //check specifications of password ie. letters/numbers
             {
@@ -56,24 +58,30 @@ namespace password_genorator
                 {
                     totalLetter++;
                 }
+                for(int i = 0; i < specialChar.Length; i++) //check for specific special char           lowkey this sucks
+                {
+                    if(character == specialChar[i])
+                    {
+                        totalSpecial++;
+                    }
+                }
             }
 
-            result = passwordCheck(totalLetter, totalLowerLetter, totalUpperLetter, totalNum); //pass to check
+            result = passwordCheck(totalLetter, totalLowerLetter, totalUpperLetter, totalNum, totalSpecial); //pass to check
 
             if(result == null)
             {
                 result = "Password accepted";                                                  //set acceptance
             }
-
             return (result);                                                                   //return string to main
         }
 
-        private static string passwordCheck(int totalLetter, int totalLower, int totalUpper, int totalNum)
+        private static string passwordCheck(int totalLetter, int totalLower, int totalUpper, int totalNum, int totalSpecial)
         {
             string result = null;
-            int passLegnth = totalLetter + totalLower + totalUpper + totalNum;
+            int passLegnth = totalLetter + totalNum + totalSpecial;
 
-            if (passLegnth < 8)
+            if (passLegnth < 9)
             {
                 result = "Password does not meat minimum character legnth. Please try again \n";
             }
@@ -102,6 +110,11 @@ namespace password_genorator
                 {
                     result = result + "Not enough numbers \n";
                 }
+
+                if(totalSpecial < 1)
+                {
+                    result = result + "Needs to have 1 special character \n";
+                }
             }
             return result;
         }
@@ -109,7 +122,8 @@ namespace password_genorator
         private static string suggestedPassword()
         {
             string suggestedPassword;
-            char[] suggestion = new char[9];
+            char[] specialChar = { '!', '@', '#', '$', '%', '^', '&', '*' };
+            char[] suggestion = new char[10];
             Random rnd = new Random();
 
             for (int i = 0; i < 7; i++)                     //creates 7 random letters
@@ -127,6 +141,9 @@ namespace password_genorator
                 temp= Convert.ToString(num);
                 suggestion[i] = Convert.ToChar(temp);
             }
+
+            int special = rnd.Next(7);                      //picks a random special character to add
+            suggestion[9] = specialChar[special];
             
             suggestedPassword = string.Join("", suggestion);
             suggestedPassword = new string(suggestedPassword.ToCharArray().OrderBy(s => (rnd.Next(2) % 2) == 0).ToArray()); //randomizes the order of characters in the password
