@@ -6,7 +6,7 @@ namespace password_genorator
     {
         static void Main(string[] args)                                         //Main method
         {
-            passwordCont();
+            passwordCont(); // start check
         }
 
 
@@ -14,47 +14,67 @@ namespace password_genorator
         {
             Console.Write("What is your new password: ");                       //Ask User for new password
             string newPassword = Console.ReadLine();
-            string answer = passwordChecker(newPassword);                          //pass to method-passwordChecker
+            string answer = passwordValue(newPassword);                          //pass to method-passwordChecker
+            
+            while (answer != "Password accepted")
+            {
+                Console.WriteLine(answer);
+                string suggestedPass = suggestedPassword();
+                Console.WriteLine("Suggested password: {0}", suggestedPass);
+                Console.Write("What is your new password: ");
+                newPassword = Console.ReadLine();
+                answer = passwordValue(newPassword);
+            }
+
             Console.WriteLine(answer);
         }
 
-        private static string passwordChecker(string newPassword)                  //take in user input password
+        private static string passwordValue(string newPassword)                  //take in user input password
         {
             string result = null;
-            int tryAgain = 0;
             int totalNum = 0;
             int totalLowerLetter = 0;
             int totalUpperLetter = 0;
             int totalLetter = 0;
 
-
             foreach (char character in newPassword)                                  //check specifications of password ie. letters/numbers
             {
-                if (Char.IsDigit(character))
+                if (Char.IsDigit(character)) //check total num
                 {
                     totalNum++;
                 }
-
-                if (Char.IsLower(character))
+                if (Char.IsLower(character)) //check lower letters
                 {
                     totalLowerLetter++;
                 }
-
-                if (Char.IsUpper(character))
+                if (Char.IsUpper(character)) //check upper letters
                 {
                     totalUpperLetter++;
                 }
-
-                if (Char.IsLetter(character))
+                if (Char.IsLetter(character)) //check lower letters
                 {
                     totalLetter++;
                 }
             }
 
-            if (newPassword.Length < 7)
+            result = passwordCheck(totalLetter, totalLowerLetter, totalUpperLetter, totalNum); //pass to check
+
+            if(result == null)
             {
-                result = "Password does not meat minimum character legnth. Please try again";
-                tryAgain = 1;
+                result = "Password accepted";                                                  //set acceptance
+            }
+
+            return (result);                                                                   //return string to main
+        }
+
+        private static string passwordCheck(int totalLetter, int totalLower, int totalUpper, int totalNum)
+        {
+            string result = null;
+            int passLegnth = totalLetter + totalLower + totalUpper + totalNum;
+
+            if (passLegnth < 7)
+            {
+                result = "Password does not meat minimum character legnth. Please try again \n";
             }
 
             else
@@ -62,33 +82,50 @@ namespace password_genorator
                 if (totalLetter < 5)
                 {
                     result = "Not enough letters \n";
-                    tryAgain = 1;
                 }
 
                 else
                 {
-                    if (totalUpperLetter < 2)
+                    if (totalUpper < 2)
                     {
                         result = "Not enough Upper case letters \n";
-                        tryAgain = 1;
                     }
 
-                    if (totalLowerLetter < 3)
+                    if (totalLower < 3)
                     {
                         result = result + "Not enough lower letters \n";
-                        tryAgain = 1;
                     }
                 }
 
                 if (totalNum < 2)
                 {
                     result = result + "Not enough numbers \n";
-                    tryAgain = 1;
                 }
             }
+            return result;
+        }
 
+        private static string suggestedPassword()
+        {
+            string suggestedPassword;
+            char[] suggestion = new char[9];
+            Random letter = new Random();
+            Random number = new Random();
 
-            return (result);                                                      //return string to main
+            for (int i = 0; i < 7; i++)
+            {
+                suggestion[i] = (char)letter.Next('a', 'z');
+            }
+
+            for(int i = 7; i < 9; i++)
+            {
+                int num = number.Next(0, 9);
+                suggestion[i] = Convert.ToChar(num);
+            }
+
+            suggestedPassword = string.Join("", suggestion);
+
+            return Convert.ToString(suggestedPassword);
         }
     }
 }
