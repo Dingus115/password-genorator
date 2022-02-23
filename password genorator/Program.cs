@@ -54,11 +54,13 @@ namespace password_genorator
                 {
                     totalUpperLetter++;
                 }
-                if (Char.IsLetter(character)) //check lower letters
+                if (Char.IsLetter(character)) //check letters
                 {
                     totalLetter++;
                 }
-                for(int i = 0; i < specialChar.Length; i++) //check for specific special char           lowkey this sucks
+
+                //if(character == '!' || '@' || '#' || '$' || '%' || '^' || '&' || '*')
+                for (int i = 0; i < specialChar.Length; i++) //check for specific special char           lowkey this sucks
                 {
                     if(character == specialChar[i])
                     {
@@ -85,36 +87,25 @@ namespace password_genorator
             {
                 result = "Password does not meat minimum character legnth. Please try again \n";
             }
-
-            else
+            if (totalLetter < 5)
             {
-                if (totalLetter < 5)
-                {
-                    result = "Not enough letters \n";
-                }
-
-                else
-                {
-                    if (totalUpper < 2)
-                    { 
-                        result = "Not enough Upper case letters \n";
-                    }
-
-                    if (totalLower < 3)
-                    {
-                        result = result + "Not enough lower letters \n";
-                    }
-                }
-
-                if (totalNum < 3)
-                {
-                    result = result + "Not enough numbers \n";
-                }
-
-                if(totalSpecial < 1)
-                {
-                    result = result + "Needs to have 1 special character \n";
-                }
+                result += "Not enough letters \n";
+            }
+            if (totalUpper < 2)
+            { 
+                result += "Not enough Upper case letters \n";
+            }
+            if (totalLower < 3)
+            {
+               result += "Not enough lower letters \n";
+            }
+            if (totalNum < 3)
+            {
+                result += "Not enough numbers \n";
+            }
+            if(totalSpecial < 1)
+            {
+               result += "Needs to have 1 special character \n";
             }
             return result;
         }
@@ -136,10 +127,8 @@ namespace password_genorator
                 //int num = number.Next(9);                     Converts num into a special character rather than a number
                 //suggestion[i] = Convert.ToChar(num);
 
-                int num = rnd.Next(9);                       //I don't understand why this works this way
-                string temp;
-                temp= Convert.ToString(num);
-                suggestion[i] = Convert.ToChar(temp);
+                int num = rnd.Next(9);
+                suggestion[i] = Convert.ToChar(Convert.ToString(num));
             }
 
             int special = rnd.Next(7);                      //picks a random special character to add
