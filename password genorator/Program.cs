@@ -5,18 +5,15 @@ namespace password_genorator
 {
     class Program
     {
+
+        public static char[] specialChar = { '!', '@', '#', '$', '%', '^', '&', '*' };
         static void Main(string[] args)                                         //Main method
         {
-            passwordCont(); // start check
-        }
 
-
-        private static void passwordCont()
-        {
             Console.Write("What is your new password: ");                       //Ask User for new password
             string newPassword = Console.ReadLine();
             string answer = passwordValue(newPassword);                          //pass to method-passwordChecker
-            
+
             while (answer != "Password accepted")
             {
                 Console.WriteLine(answer);
@@ -26,14 +23,13 @@ namespace password_genorator
                 newPassword = Console.ReadLine();
                 answer = passwordValue(newPassword);
             }
-
             Console.WriteLine(answer);
         }
 
         private static string passwordValue(string newPassword)                  //take in user input password
         {
-            string result = null;
-            char[] specialChar = { '!', '@', '#', '$', '%', '^', '&', '*' };
+            int result = 0;
+            string accepted = null;
             int totalNum = 0;
             int totalLowerLetter = 0;
             int totalUpperLetter = 0;
@@ -71,41 +67,46 @@ namespace password_genorator
 
             result = passwordCheck(totalLetter, totalLowerLetter, totalUpperLetter, totalNum, totalSpecial); //pass to check
 
-            if(result == null)
+            if(result == 0)
             {
-                result = "Password accepted";                                                  //set acceptance
+                accepted = "Password accepted";                                                  //set acceptance
             }
-            return (result);                                                                   //return string to main
+            return (accepted);                                                                   //return string to main
         }
 
-        private static string passwordCheck(int totalLetter, int totalLower, int totalUpper, int totalNum, int totalSpecial)
+        private static int passwordCheck(int totalLetter, int totalLower, int totalUpper, int totalNum, int totalSpecial)
         {
-            string result = null;
             int passLegnth = totalLetter + totalNum + totalSpecial;
-
+            int result = 0;
             if (passLegnth < 9)
             {
-                result = "Password does not meat minimum character legnth. Please try again \n";
+                Console.WriteLine("Password does not meat minimum reuqirements. \nPassword must include:");
+                result = 1;
             }
             if (totalLetter < 5)
             {
-                result += "Not enough letters \n";
+                Console.WriteLine("Password must have minimum 5 letters");
+                result = 1;
             }
             if (totalUpper < 2)
-            { 
-                result += "Not enough Upper case letters \n";
+            {
+                Console.WriteLine("Password must have at least 2 Upper case Characters");
+                result = 1;
             }
             if (totalLower < 3)
             {
-               result += "Not enough lower letters \n";
+                Console.WriteLine("Password must have at least 3 Lower case Characters");
+                result = 1;
             }
             if (totalNum < 3)
             {
-                result += "Not enough numbers \n";
+                Console.WriteLine("Password must have at least 3 Numbers");
+                result = 1;
             }
             if(totalSpecial < 1)
             {
-               result += "Needs to have 1 special character \n";
+               Console.WriteLine("Password must have at least 1 special character \n (ie: !, @, #, $, %, ^, &, *)");
+                result = 1;
             }
             return result;
         }
@@ -113,7 +114,6 @@ namespace password_genorator
         private static string suggestedPassword()
         {
             string suggestedPassword;
-            char[] specialChar = { '!', '@', '#', '$', '%', '^', '&', '*' };
             char[] suggestion = new char[10];
             Random rnd = new Random();
 
@@ -133,7 +133,6 @@ namespace password_genorator
 
             int special = rnd.Next(7);                      //picks a random special character to add
             suggestion[9] = specialChar[special];
-            
             suggestedPassword = string.Join("", suggestion);
             suggestedPassword = new string(suggestedPassword.ToCharArray().OrderBy(s => (rnd.Next(2) % 2) == 0).ToArray()); //randomizes the order of characters in the password
             return suggestedPassword;
